@@ -39,5 +39,7 @@ export const projectService = {
   },
 };
 
+export default projectService;
+
 
 

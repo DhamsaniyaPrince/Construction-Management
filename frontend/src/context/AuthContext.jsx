@@ -69,7 +69,20 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
   };
 
-  const value = useMemo(() => ({ user, token, googleLogin, register, login, logout, loading }), [user, token, loading]);
+  const signup = async (userData) => {
+    try {
+      const data = await authService.signup(userData);
+      setUser(data.user);
+      setToken(data.token);
+      localStorage.setItem('token', data.token);
+      return data;
+    } catch (error) {
+      console.error('Signup error in context:', error);
+      throw error;
+    }
+  };
+
+  const value = useMemo(() => ({ user, token, googleLogin, register, login, logout, loading, signup }), [user, token, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

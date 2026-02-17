@@ -12,7 +12,7 @@ const signToken = (user) =>
 
 // Google OAuth login/signup
 const googleAuth = async (req, res) => {
-  const { token: googleToken } = req.body;
+  const { token: googleToken, role } = req.body;
 
   if (!googleToken) {
     return res.status(400).json({ message: 'Google token is required' });
@@ -51,11 +51,14 @@ const googleAuth = async (req, res) => {
       }
     } else {
       // Create new user
+      const allowedRoles = ['worker', 'contractor', 'site_manager', 'engineer'];
+      const userRole = role && allowedRoles.includes(role) ? role : 'worker';
+      
       user = await User.create({
         name,
         email,
         googleId,
-        role: 'worker', // Default role
+        role: userRole,
       });
     }
 
@@ -106,7 +109,7 @@ const signupUser = async (req, res) => {
   }
 
   // Only allow specific roles for public signup
-  const allowedRoles = ['worker', 'contractor', 'engineer'];
+  const allowedRoles = ['worker', 'contractor', 'site_manager', 'engineer'];
   const userRole = role && allowedRoles.includes(role) ? role : 'worker';
 
   const existingUser = await User.findOne({ email });
@@ -145,7 +148,7 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ message: 'Please provide name, email, phone, and password' });
   }
 
-  if (role && !['admin', 'engineer', 'contractor', 'worker'].includes(role)) {
+  if (role && !['admin', 'engineer', 'contractor', 'site_manager', 'worker'].includes(role)) {
     return res.status(400).json({ message: 'Invalid role' });
   }
 

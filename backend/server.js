@@ -27,11 +27,15 @@ app.get('/api/health', (req, res) => {
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
 app.use('/api/materials', require('./routes/materialRoutes'));
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
 app.use('/api/equipment', require('./routes/equipmentRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
+app.use('/api/tasks', require('./routes/taskRoutes'));
+app.use('/api/invoices', require('./routes/invoiceRoutes'));
+app.use('/api/blueprints', require('./routes/blueprintRoutes'));
 
 // 404 handler
 app.use((req, res, next) => {

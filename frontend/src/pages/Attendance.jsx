@@ -13,7 +13,7 @@ const Attendance = () => {
   const [projects, setProjects] = useState([]);
   const [workers, setWorkers] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [selectedProject, setSelectedProject] = useState('');
@@ -22,12 +22,18 @@ const Attendance = () => {
 
   useEffect(() => {
     fetchProjects();
-    if (user?.role === 'admin' || user?.role === 'engineer') {
+    if (user?.role === 'admin' || user?.role === 'engineer' || user?.role === 'contractor') {
       fetchWorkers();
     }
-    if (selectedProject) {
-      fetchAttendance();
+  }, [user?.role]);
+
+  useEffect(() => {
+    if (!selectedProject) {
+      setAttendance([]);
+      setLoading(false);
+      return;
     }
+    fetchAttendance();
   }, [selectedProject, selectedDate, viewMode]);
 
   const fetchProjects = async () => {
@@ -36,6 +42,7 @@ const Attendance = () => {
       setProjects(data.data || []);
     } catch (err) {
       console.error('Failed to load projects:', err);
+      setError(err.response?.data?.message || 'Failed to load projects');
     }
   };
 
@@ -45,18 +52,20 @@ const Attendance = () => {
       setWorkers(data.data || []);
     } catch (err) {
       console.error('Failed to load workers:', err);
+      setError(err.response?.data?.message || 'Failed to load workers');
     }
   };
 
   const fetchAttendance = async () => {
     try {
       setLoading(true);
-      const params = { date: selectedDate };
       let data;
       if (viewMode === 'project') {
+        const params = { date: selectedDate };
         data = await attendanceService.getProjectAttendance(selectedProject, params);
       } else {
         const workerId = selectedProject; // In worker mode, selectedProject is workerId
+        const params = { from: selectedDate, to: selectedDate };
         data = await attendanceService.getWorkerAttendance(workerId, params);
       }
       setAttendance(data.data || []);

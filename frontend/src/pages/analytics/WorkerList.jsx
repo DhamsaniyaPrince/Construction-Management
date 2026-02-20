@@ -22,11 +22,13 @@ const WorkerList = () => {
         workerAnalyticsService.getWorkers ? workerAnalyticsService.getWorkers() : [],
         workerAnalyticsService.getWorkerAnalytics()
       ]);
+
+      let workersList = workersData;
       
       // If getWorkers is not available, we'll create a basic list from analytics
-      if (workersData.length === 0 && analyticsData) {
+      if (workersList.length === 0 && analyticsData) {
         // Create mock workers list based on analytics data
-        workersData = [
+        workersList = [
           { _id: '1', name: 'John Smith', email: 'john@example.com', specialization: 'Carpentry', dailyWage: 120, isAvailable: true },
           { _id: '2', name: 'Sarah Johnson', email: 'sarah@example.com', specialization: 'Electrical', dailyWage: 150, isAvailable: false },
           { _id: '3', name: 'Mike Wilson', email: 'mike@example.com', specialization: 'Plumbing', dailyWage: 130, isAvailable: true },
@@ -35,7 +37,7 @@ const WorkerList = () => {
         ];
       }
       
-      setWorkers(workersData);
+      setWorkers(workersList);
       setAnalytics(analyticsData);
     } catch (err) {
       console.error('Failed to fetch data:', err);

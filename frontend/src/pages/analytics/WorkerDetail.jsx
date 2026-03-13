@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import workerAnalyticsService from '../../services/workerAnalyticsService';
+<<<<<<< HEAD
 import { formatINR } from '../../utils/currency';
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
 const WorkerDetail = () => {
   const { id } = useParams();
@@ -229,7 +232,11 @@ const WorkerDetail = () => {
           </div>
           <div>
             <div className="text-sm text-gray-500">Daily Wage</div>
+<<<<<<< HEAD
             <div className="font-medium">{formatINR(workerData.worker.dailyWage)}</div>
+=======
+            <div className="font-medium">${workerData.worker.dailyWage}</div>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
           </div>
           <div>
             <div className="text-sm text-gray-500">Join Date</div>
@@ -272,7 +279,11 @@ const WorkerDetail = () => {
           <div className="text-xs text-gray-500 mt-1">In Progress</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
+<<<<<<< HEAD
           <div className="text-2xl font-bold text-purple-600">{formatINR(workerData.performance.totalEarnings)}</div>
+=======
+          <div className="text-2xl font-bold text-purple-600">${workerData.performance.totalEarnings}</div>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
           <div className="text-xs text-gray-500 mt-1">Total Earnings</div>
         </div>
       </div>

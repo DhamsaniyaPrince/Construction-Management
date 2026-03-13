@@ -5,12 +5,18 @@ import { useAuth } from '../../context/AuthContext';
 import invoiceService from '../../services/invoiceService';
 import taskService from '../../services/taskService';
 import workerService from '../../services/workerService';
+<<<<<<< HEAD
 import projectService from '../../services/projectService';
 import materialRequestService from '../../services/materialRequestService';
 import { formatINR } from '../../utils/currency';
 
 // Tabs
 const TABS = ['Overview', 'Manage Workers', 'Assign Tasks', 'Invoices', 'Material Requests', 'My Projects', 'Create Project'];
+=======
+
+// Tabs
+const TABS = ['Overview', 'Manage Workers', 'Assign Tasks', 'Invoices'];
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
 const ContractorDashboard = () => {
   const { user } = useAuth();
@@ -21,15 +27,19 @@ const ContractorDashboard = () => {
   const [workers, setWorkers] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [invoices, setInvoices] = useState([]);
+<<<<<<< HEAD
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isEditingProject, setIsEditingProject] = useState(false);
   const [materialRequests, setMaterialRequests] = useState([]);
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
   // Form States
   const [newTask, setNewTask] = useState({ title: '', description: '', assignedTo: '', priority: 'Medium', dueDate: '', siteLocation: '' });
   const [newWorker, setNewWorker] = useState({ name: '', email: '', password: 'worker123', phone: '', dailyWage: '' });
   const [newInvoice, setNewInvoice] = useState({ title: '', amount: '', description: '', imageUrl: '' });
+<<<<<<< HEAD
   const [newProject, setNewProject] = useState({ 
     projectId: '', 
     name: '', 
@@ -51,6 +61,8 @@ const ContractorDashboard = () => {
     insurance: ''
   });
   const [salaryUpdate, setSalaryUpdate] = useState({ workerId: '', dailyWage: '' });
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
   useEffect(() => {
     fetchData();
@@ -59,6 +71,7 @@ const ContractorDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
+<<<<<<< HEAD
       const [workersRes, tasksRes, invoicesRes, projectsRes, materialRequestsRes] = await Promise.all([
         workerService.getWorkers(),
         taskService.getTasks(),
@@ -71,6 +84,16 @@ const ContractorDashboard = () => {
       setInvoices(invoicesRes.data || invoicesRes);
       setProjects(projectsRes.data || projectsRes);
       setMaterialRequests(materialRequestsRes.data || materialRequestsRes);
+=======
+      const [workersRes, tasksRes, invoicesRes] = await Promise.all([
+        workerService.getWorkers(),
+        taskService.getTasks(),
+        invoiceService.getInvoices()
+      ]);
+      setWorkers(workersRes.data || workersRes); // handle pagination wrapper if exists
+      setTasks(tasksRes);
+      setInvoices(invoicesRes);
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
     } catch (error) {
       console.error("Error fetching dashboard data", error);
     } finally {
@@ -118,6 +141,7 @@ const ContractorDashboard = () => {
     }
   };
 
+<<<<<<< HEAD
   const handleCreateProject = async (e) => {
     e.preventDefault();
     try {
@@ -259,6 +283,8 @@ const ContractorDashboard = () => {
     }
   };
 
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
   if (loading) return <div className="flex justify-center p-20"><Loader /></div>;
 
   return (
@@ -329,7 +355,11 @@ const ContractorDashboard = () => {
                   required 
                 />
                 <input 
+<<<<<<< HEAD
                   type="number" placeholder="Daily Wage (₹)" 
+=======
+                  type="number" placeholder="Daily Wage ($)" 
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                   value={newWorker.dailyWage} onChange={e => setNewWorker({...newWorker, dailyWage: e.target.value})}
                 />
                 <button type="submit" className="btn btn-primary w-full">Enable Worker Account</button>
@@ -339,6 +369,7 @@ const ContractorDashboard = () => {
             {/* Workers List */}
             <div className="lg:col-span-2 space-y-4">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Your Workforce</h2>
+<<<<<<< HEAD
               
               {/* Salary Update Form */}
               <div className="glass-card p-4">
@@ -371,6 +402,10 @@ const ContractorDashboard = () => {
 
               {(!workers || workers.length === 0) && <p className="text-gray-500">No workers found.</p>}
               {workers && workers.map(worker => (
+=======
+              {workers.length === 0 && <p className="text-gray-500">No workers found.</p>}
+              {workers.map(worker => (
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                 <div key={worker._id} className="glass-panel p-4 flex justify-between items-center hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-lg font-bold text-blue-600">
@@ -379,7 +414,10 @@ const ContractorDashboard = () => {
                     <div>
                       <h4 className="font-bold text-gray-900">{worker.name}</h4>
                       <p className="text-sm text-gray-500">{worker.phone} • {worker.email}</p>
+<<<<<<< HEAD
                       <p className="text-sm text-gray-600">Daily Wage: {formatINR(worker.dailyWage || 0)}</p>
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                     </div>
                   </div>
                   <div className="text-right">
@@ -414,7 +452,11 @@ const ContractorDashboard = () => {
                   className="bg-white border-gray-300 text-gray-900"
                 >
                   <option value="">Select Worker</option>
+<<<<<<< HEAD
                   {workers && workers.map(w => (
+=======
+                  {workers.map(w => (
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                     <option key={w._id} value={w._id}>{w.name}</option>
                   ))}
                 </select>
@@ -442,8 +484,13 @@ const ContractorDashboard = () => {
             </div>
 
             <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+<<<<<<< HEAD
                {(!tasks || tasks.length === 0) && <p className="col-span-full text-gray-500">No tasks created yet.</p>}
                {tasks && tasks.map(task => (
+=======
+               {tasks.length === 0 && <p className="col-span-full text-gray-500">No tasks created yet.</p>}
+               {tasks.map(task => (
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                  <TaskCard key={task._id} task={task} onUpdateStatus={() => {}} />
                ))}
             </div>
@@ -462,7 +509,11 @@ const ContractorDashboard = () => {
                   required 
                 />
                  <input 
+<<<<<<< HEAD
                   type="number" placeholder="Amount (₹)" 
+=======
+                  type="number" placeholder="Amount ($)" 
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                   value={newInvoice.amount} onChange={e => setNewInvoice({...newInvoice, amount: e.target.value})}
                   required 
                 />
@@ -481,8 +532,13 @@ const ContractorDashboard = () => {
 
              <div className="lg:col-span-2 space-y-4">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Invoice History</h2>
+<<<<<<< HEAD
               {(!invoices || invoices.length === 0) && <p className="text-gray-500">No invoices submitted.</p>}
               {invoices && invoices.map(invoice => (
+=======
+              {invoices.length === 0 && <p className="text-gray-500">No invoices submitted.</p>}
+              {invoices.map(invoice => (
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                 <div key={invoice._id} className="glass-panel p-4 flex justify-between items-center">
                   <div>
                     <h4 className="font-bold text-gray-900">{invoice.title}</h4>
@@ -494,7 +550,11 @@ const ContractorDashboard = () => {
                     </span>
                   </div>
                   <div className="text-right">
+<<<<<<< HEAD
                     <span className="block text-xl font-bold text-gray-900">{formatINR(invoice.amount)}</span>
+=======
+                    <span className="block text-xl font-bold text-gray-900">${invoice.amount}</span>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                     <span className="text-xs text-gray-500">{new Date(invoice.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -503,6 +563,7 @@ const ContractorDashboard = () => {
           </div>
         )}
 
+<<<<<<< HEAD
         {/* MY PROJECTS TAB */}
         {activeTab === 'My Projects' && (
           <div className="space-y-6">
@@ -1459,6 +1520,8 @@ const ContractorDashboard = () => {
           </div>
         )}
 
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
       </div>
     </div>
   );

@@ -28,8 +28,13 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
+<<<<<<< HEAD
 app.use('/api/materials', require('./routes/materialRequestRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
+=======
+app.use('/api/projects', require('./routes/projectRoutes'));
+app.use('/api/materials', require('./routes/materialRoutes'));
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
 app.use('/api/equipment', require('./routes/equipmentRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));

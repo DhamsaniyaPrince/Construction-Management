@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
+<<<<<<< HEAD
 import workerService from '../../services/workerService';
 import workerAnalyticsService from '../../services/workerAnalyticsService';
 import { formatINR } from '../../utils/currency';
+=======
+import workerAnalyticsService from '../../services/workerAnalyticsService';
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
 const WorkerList = () => {
   const navigate = useNavigate();
@@ -163,7 +167,11 @@ const WorkerList = () => {
             <div className="text-xs text-gray-500 mt-1">Currently Busy</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
+<<<<<<< HEAD
             <div className="text-2xl font-bold text-purple-600">{formatINR(analytics.overview.averageWage.toFixed(0))}</div>
+=======
+            <div className="text-2xl font-bold text-purple-600">${analytics.overview.averageWage.toFixed(0)}</div>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
             <div className="text-xs text-gray-500 mt-1">Average Wage</div>
           </div>
         </div>
@@ -203,7 +211,11 @@ const WorkerList = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Daily Wage:</span>
+<<<<<<< HEAD
                     <span className="font-medium">{formatINR(worker.dailyWage || 0)}</span>
+=======
+                    <span className="font-medium">${worker.dailyWage || 0}</span>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                   </div>
                   {performance && (
                     <div className="flex justify-between text-sm">

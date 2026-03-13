@@ -4,10 +4,15 @@ import { useAuth } from '../../context/AuthContext';
 import invoiceService from '../../services/invoiceService';
 import projectService from '../../services/projectService';
 import workerService from '../../services/workerService';
+<<<<<<< HEAD
 import materialRequestService from '../../services/materialRequestService';
 import { formatINR } from '../../utils/currency';
 
 const TABS = ['Global Overview', 'Material Requests', 'Approvals', 'Financials'];
+=======
+
+const TABS = ['Global Overview', 'Approvals', 'Financials'];
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
 const SiteManagerDashboard = () => {
   const { user } = useAuth();
@@ -18,6 +23,7 @@ const SiteManagerDashboard = () => {
   const [projects, setProjects] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [workers, setWorkers] = useState([]); // To track total workforce
+<<<<<<< HEAD
   const [materialRequests, setMaterialRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
 
@@ -34,6 +40,8 @@ const SiteManagerDashboard = () => {
     notes: '',
     budget: ''
   });
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
   useEffect(() => {
     fetchData();
@@ -42,6 +50,7 @@ const SiteManagerDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
+<<<<<<< HEAD
       const [projectsRes, invoicesRes, workersRes, materialRequestsRes] = await Promise.all([
         projectService.getProjects(),
         invoiceService.getInvoices(),
@@ -54,6 +63,18 @@ const SiteManagerDashboard = () => {
       setMaterialRequests(materialRequestsRes.data || materialRequestsRes);
     } catch (error) {
       console.error("Error fetching dashboard data", error);
+=======
+      const [projectsRes, invoicesRes, workersRes] = await Promise.all([
+        projectService.getProjects(),
+        invoiceService.getInvoices(),
+        workerService.getWorkers() 
+      ]);
+      setProjects(projectsRes.data || projectsRes);
+      setInvoices(invoicesRes);
+      setWorkers(workersRes.data || workersRes);
+    } catch (error) {
+      console.error(error);
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
     } finally {
       setLoading(false);
     }
@@ -66,6 +87,7 @@ const SiteManagerDashboard = () => {
       fetchData();
     } catch (error) {
       console.error(error);
+<<<<<<< HEAD
       alert('Failed to approve invoice');
     }
   };
@@ -102,11 +124,15 @@ const SiteManagerDashboard = () => {
     } catch (error) {
       console.error(error);
       alert('Failed to update request status');
+=======
+      alert('Approval failed');
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
     }
   };
 
   const handleRejectInvoice = async (id) => {
     try {
+<<<<<<< HEAD
       await invoiceService.updateInvoice(id, { status: 'Rejected' });
       alert('Invoice Rejected');
       fetchData();
@@ -114,6 +140,15 @@ const SiteManagerDashboard = () => {
       console.error(error);
       alert('Rejection failed');
     }
+=======
+        await invoiceService.updateInvoice(id, { status: 'Rejected' });
+        alert('Invoice Rejected');
+        fetchData();
+      } catch (error) {
+        console.error(error);
+        alert('Rejection failed');
+      }
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
   };
 
   if (loading) return <div className="flex justify-center p-20"><Loader /></div>;
@@ -154,11 +189,19 @@ const SiteManagerDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="glass-panel p-6 border-b-4 border-blue-600">
                 <h3 className="text-gray-500 text-sm uppercase font-bold mb-2">Total Budget</h3>
+<<<<<<< HEAD
                 <p className="text-3xl font-bold text-gray-900">{formatINR(totalBudget)}</p>
                 </div>
                 <div className="glass-panel p-6 border-b-4 border-emerald-500">
                 <h3 className="text-gray-500 text-sm uppercase font-bold mb-2">Spent to Date</h3>
                 <p className="text-3xl font-bold text-emerald-600">{formatINR(totalSpent)}</p>
+=======
+                <p className="text-3xl font-bold text-gray-900">${totalBudget.toLocaleString()}</p>
+                </div>
+                <div className="glass-panel p-6 border-b-4 border-emerald-500">
+                <h3 className="text-gray-500 text-sm uppercase font-bold mb-2">Spent to Date</h3>
+                <p className="text-3xl font-bold text-emerald-600">${totalSpent.toLocaleString()}</p>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                 </div>
                 <div className="glass-panel p-6 border-b-4 border-blue-400">
                 <h3 className="text-gray-500 text-sm uppercase font-bold mb-2">Active Projects</h3>
@@ -212,7 +255,11 @@ const SiteManagerDashboard = () => {
                                     <p className="text-sm text-gray-500">Submitted by: {inv.contractor?.name}</p>
                                     <p className="text-xs text-gray-400 mt-1">{new Date(inv.createdAt).toDateString()}</p>
                                 </div>
+<<<<<<< HEAD
                                 <span className="text-2xl font-bold text-gray-900">{formatINR(inv.amount)}</span>
+=======
+                                <span className="text-2xl font-bold text-gray-900">${inv.amount}</span>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                             </div>
                             
                             {inv.description && <p className="text-sm text-gray-600 mb-4 bg-gray-50 p-2 rounded">{inv.description}</p>}
@@ -236,13 +283,18 @@ const SiteManagerDashboard = () => {
                 </div>
              </div>
              
+<<<<<<< HEAD
              <div className="glass-panel p-6 h-fit">
+=======
+             <div className="glass-panel p-6 h-fit opacity-75">
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                  <h2 className="text-xl font-bold text-gray-800 mb-4">Material Requests</h2>
                  <p className="text-gray-400 text-center py-10">No pending requests.</p>
              </div>
            </div>
          )}
 
+<<<<<<< HEAD
          {/* MATERIAL REQUESTS TAB */}
          {activeTab === 'Material Requests' && (
            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -530,6 +582,8 @@ const SiteManagerDashboard = () => {
            </div>
          )}
 
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
          {/* FINANCIALS */}
          {activeTab === 'Financials' && (
              <div className="glass-card">
@@ -556,7 +610,11 @@ const SiteManagerDashboard = () => {
                                          inv.status === 'Rejected' ? 'text-red-600' : 'text-amber-600'
                                      }`}>{inv.status}</span>
                                  </td>
+<<<<<<< HEAD
                                  <td className="py-3 text-right font-mono text-gray-700">{formatINR(inv.amount)}</td>
+=======
+                                 <td className="py-3 text-right font-mono text-gray-700">${inv.amount}</td>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                              </tr>
                          ))}
                      </tbody>

@@ -4,7 +4,10 @@ import TaskCard from '../../components/TaskCard';
 import Notifications from '../../components/Notifications';
 import { useAuth } from '../../context/AuthContext';
 import taskService from '../../services/taskService';
+<<<<<<< HEAD
 import { formatINR } from '../../utils/currency';
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
 const WorkerDashboard = () => {
   const { user } = useAuth();
@@ -83,7 +86,11 @@ const WorkerDashboard = () => {
           <span className="text-xs text-gray-500 uppercase tracking-wide">Completed</span>
         </div>
         <div className="glass-panel p-4 flex flex-col items-center justify-center text-center">
+<<<<<<< HEAD
           <span className="text-3xl font-bold text-amber-500 mb-1">{formatINR(todayWage)}</span>
+=======
+          <span className="text-3xl font-bold text-amber-500 mb-1">${todayWage}</span>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
           <span className="text-xs text-gray-500 uppercase tracking-wide">Daily Wage</span>
         </div>
          <div className="glass-panel p-4 flex flex-col items-center justify-center text-center border-blue-100 border">

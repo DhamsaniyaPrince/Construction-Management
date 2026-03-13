@@ -43,6 +43,7 @@ const googleAuth = async (req, res) => {
     });
 
     if (user) {
+<<<<<<< HEAD
       // Reject worker authentication attempts for existing users
       if (user.role === 'worker') {
         return res.status(403).json({ 
@@ -50,6 +51,8 @@ const googleAuth = async (req, res) => {
         });
       }
       
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
       // Update user if they don't have googleId
       if (!user.googleId) {
         user.googleId = googleId;
@@ -57,6 +60,7 @@ const googleAuth = async (req, res) => {
         await user.save();
       }
     } else {
+<<<<<<< HEAD
       // Create new user - Workers cannot create accounts
       const allowedRoles = ['contractor', 'site_manager', 'engineer'];
       const userRole = role && allowedRoles.includes(role) ? role : 'contractor';
@@ -67,6 +71,11 @@ const googleAuth = async (req, res) => {
           message: 'Workers cannot create accounts. Workers are added by contractors through the contractor dashboard.' 
         });
       }
+=======
+      // Create new user
+      const allowedRoles = ['worker', 'contractor', 'site_manager', 'engineer'];
+      const userRole = role && allowedRoles.includes(role) ? role : 'worker';
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
       
       user = await User.create({
         name,
@@ -122,6 +131,7 @@ const signupUser = async (req, res) => {
     return res.status(400).json({ message: 'Please provide name, email, and password' });
   }
 
+<<<<<<< HEAD
   // Only allow specific roles for public signup (no workers)
   const allowedRoles = ['contractor', 'site_manager', 'engineer'];
   
@@ -133,6 +143,11 @@ const signupUser = async (req, res) => {
   }
   
   const userRole = role && allowedRoles.includes(role) ? role : 'contractor';
+=======
+  // Only allow specific roles for public signup
+  const allowedRoles = ['worker', 'contractor', 'site_manager', 'engineer'];
+  const userRole = role && allowedRoles.includes(role) ? role : 'worker';
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -205,6 +220,7 @@ const loginUser = async (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
+<<<<<<< HEAD
   // Reject worker login attempts
   if (user.role === 'worker') {
     return res.status(403).json({ 
@@ -212,6 +228,8 @@ const loginUser = async (req, res) => {
     });
   }
 
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
   const isMatch = await user.matchPassword(password);
   if (!isMatch) {
     return res.status(401).json({ message: 'Invalid credentials' });

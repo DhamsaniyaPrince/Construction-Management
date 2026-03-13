@@ -12,6 +12,7 @@ const milestoneSchema = new mongoose.Schema(
 
 const projectSchema = new mongoose.Schema(
   {
+<<<<<<< HEAD
     projectId: { type: String, unique: true, trim: true },
     name: { type: String, required: true, trim: true },
     projectType: { type: String, enum: ['residential', 'commercial', 'industrial', 'infrastructure', 'renovation', 'maintenance'], trim: true },
@@ -30,6 +31,14 @@ const projectSchema = new mongoose.Schema(
     teamSize: { type: Number },
     permits: { type: String, trim: true },
     insurance: { type: String, trim: true },
+=======
+    name: { type: String, required: true, trim: true },
+    description: { type: String, trim: true },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    status: { type: String, enum: ['planned', 'active', 'on-hold', 'completed'], default: 'planned' },
+    budget: { type: Number },
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
     engineers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     milestones: [milestoneSchema],
   },

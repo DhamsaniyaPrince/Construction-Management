@@ -5,7 +5,10 @@ import { userService } from '../services/userService';
 import Loader from '../components/Loader';
 import ErrorAlert from '../components/ErrorAlert';
 import SuccessAlert from '../components/SuccessAlert';
+<<<<<<< HEAD
 import { formatINR } from '../utils/currency';
+=======
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 
 const Projects = () => {
   const { user } = useAuth();
@@ -378,7 +381,11 @@ const ProjectDetailsModal = ({ project, engineers, onClose, onUpdate, canEdit })
             </div>
             <div>
               <h3 className="font-semibold text-gray-900">Budget</h3>
+<<<<<<< HEAD
               <p className="mt-1 text-gray-600">{formatINR(project.budget || 0)}</p>
+=======
+              <p className="mt-1 text-gray-600">${project.budget || 'N/A'}</p>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
             </div>
           </div>
 

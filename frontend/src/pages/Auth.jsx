@@ -11,10 +11,17 @@ const Auth = () => {
     name: "",
     email: "",
     password: "",
+<<<<<<< HEAD
     role: "contractor",
     phone: ""
   });
   const [googleRole, setGoogleRole] = useState("contractor");
+=======
+    role: "worker",
+    phone: ""
+  });
+  const [googleRole, setGoogleRole] = useState("worker");
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
   const { googleLogin, signup } = useAuth();
   const navigate = useNavigate();
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
@@ -26,7 +33,11 @@ const Auth = () => {
       name: "",
       email: "",
       password: "",
+<<<<<<< HEAD
       role: "contractor",
+=======
+      role: "worker",
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
       phone: ""
     });
     setError("");
@@ -64,7 +75,11 @@ const Auth = () => {
         name: "",
         email: "",
         password: "",
+<<<<<<< HEAD
         role: "contractor",
+=======
+        role: "worker",
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
         phone: ""
       });
       navigate("/");
@@ -131,6 +146,10 @@ const Auth = () => {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 >
+<<<<<<< HEAD
+=======
+                  <option value="worker">Worker</option>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                   <option value="contractor">Contractor</option>
                   <option value="site_manager">Site Manager</option>
                   <option value="engineer">Engineer</option>

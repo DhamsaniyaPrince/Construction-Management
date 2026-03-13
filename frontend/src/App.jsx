@@ -9,6 +9,10 @@ import ContractorDashboard from './pages/contractor/ContractorDashboard';
 import Dashboard from './pages/Dashboard';
 import EngineerDashboard from './pages/engineer/EngineerDashboard';
 import Equipment from './pages/Equipment';
+<<<<<<< HEAD
+=======
+import Materials from './pages/Materials';
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 import NotFound from './pages/NotFound';
 import Projects from './pages/Projects';
 import Reports from './pages/Reports';
@@ -50,6 +54,10 @@ const App = () => {
               {user?.role !== 'worker' && user?.role !== 'contractor' && user?.role !== 'engineer' && (
                 <>
                   <Link to="/projects" className="hover:text-blue-600 transition-colors">Projects</Link>
+<<<<<<< HEAD
+=======
+                  <Link to="/materials" className="hover:text-blue-600 transition-colors">Materials</Link>
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                   <Link to="/attendance" className="hover:text-blue-600 transition-colors">Attendance</Link>
                   <Link to="/reports" className="hover:text-blue-600 transition-colors">Reports</Link>
                 </>
@@ -112,6 +120,10 @@ const App = () => {
           <Route path="/site-manager-dashboard" element={<ProtectedRoute><SiteManagerDashboard /></ProtectedRoute>} />
           
           <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+<<<<<<< HEAD
+=======
+          <Route path="/materials" element={<ProtectedRoute><Materials /></ProtectedRoute>} />
+>>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
           <Route path="/attendance" element={<ProtectedRoute><Attendance /></ProtectedRoute>} />
           <Route path="/equipment" element={<ProtectedRoute><Equipment /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />

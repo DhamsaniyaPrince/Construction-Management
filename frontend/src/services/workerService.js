@@ -16,7 +16,6 @@ const addWorker = async (workerData) => {
   return response.data;
 };
 
-<<<<<<< HEAD
 const updateWorkerSalary = async (salaryData) => {
   const response = await api.put('/users/update-salary', salaryData);
   return response.data;
@@ -26,11 +25,6 @@ const workerService = {
   getWorkers,
   addWorker,
   updateWorkerSalary
-=======
-const workerService = {
-  getWorkers,
-  addWorker
->>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 };
 
 export default workerService;

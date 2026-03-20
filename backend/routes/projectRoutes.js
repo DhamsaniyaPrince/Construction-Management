@@ -20,11 +20,7 @@ const router = express.Router();
 router.post(
   '/',
   protect,
-<<<<<<< HEAD
   authorizeRoles('admin', 'engineer', 'contractor'),
-=======
-  authorizeRoles('admin', 'engineer'),
->>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
   validate([body('name').notEmpty().withMessage('Name is required')]),
   createProject
 );
@@ -33,7 +29,7 @@ router.get('/:id', protect, getProject);
 router.put(
   '/:id',
   protect,
-  authorizeRoles('admin', 'engineer'),
+  authorizeRoles('admin', 'engineer', 'contractor'),
   validate([body('name').optional().notEmpty().withMessage('Name cannot be empty')]),
   updateProject
 );

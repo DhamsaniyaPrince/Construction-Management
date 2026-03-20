@@ -309,7 +309,6 @@ const addWorkerByContractor = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
 const updateWorkerSalary = async (req, res) => {
   try {
     const { workerId, dailyWage } = req.body;
@@ -360,18 +359,12 @@ const updateWorkerSalary = async (req, res) => {
   }
 };
 
-=======
->>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 module.exports = { 
   getUsers, 
   getWorkerAnalytics,
   getWorkerById,
-<<<<<<< HEAD
   addWorkerByContractor,
   updateWorkerSalary
-=======
-  addWorkerByContractor
->>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 };
 
 

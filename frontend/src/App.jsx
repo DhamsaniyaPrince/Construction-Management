@@ -9,10 +9,7 @@ import ContractorDashboard from './pages/contractor/ContractorDashboard';
 import Dashboard from './pages/Dashboard';
 import EngineerDashboard from './pages/engineer/EngineerDashboard';
 import Equipment from './pages/Equipment';
-<<<<<<< HEAD
-=======
 import Materials from './pages/Materials';
->>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 import NotFound from './pages/NotFound';
 import Projects from './pages/Projects';
 import Reports from './pages/Reports';
@@ -40,8 +37,7 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen text-gray-900"> 
-      
+    <div className="min-h-screen text-gray-900">
       {token && (
         <header className="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -51,23 +47,22 @@ const App = () => {
 
             <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-500">
               <Link to="/" className="hover:text-blue-600 transition-colors">Dashboard</Link>
+
               {user?.role !== 'worker' && user?.role !== 'contractor' && user?.role !== 'engineer' && (
                 <>
                   <Link to="/projects" className="hover:text-blue-600 transition-colors">Projects</Link>
-<<<<<<< HEAD
-=======
                   <Link to="/materials" className="hover:text-blue-600 transition-colors">Materials</Link>
->>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
                   <Link to="/attendance" className="hover:text-blue-600 transition-colors">Attendance</Link>
                   <Link to="/reports" className="hover:text-blue-600 transition-colors">Reports</Link>
                 </>
               )}
-              {user?.role === 'admin' || user?.role === 'site_manager' || user?.role === 'contractor' ? (
+
+              {(user?.role === 'admin' || user?.role === 'site_manager' || user?.role === 'contractor') && (
                 <>
                   <Link to="/worker-analytics" className="hover:text-blue-600 transition-colors">Worker Analytics</Link>
                   <Link to="/worker-list" className="hover:text-blue-600 transition-colors">Worker Directory</Link>
                 </>
-              ) : null}
+              )}
             </nav>
 
             <div className="flex items-center gap-6">
@@ -79,7 +74,7 @@ const App = () => {
               <button
                 onClick={handleLogout}
                 className="btn bg-red-600 hover:bg-red-700 text-white text-sm py-2 px-4 rounded font-medium shadow-sm transition-colors"
-                style={{ backgroundColor: '#DC2626', color: 'white' }} 
+                style={{ backgroundColor: '#DC2626', color: 'white' }}
               >
                 Logout
               </button>
@@ -96,8 +91,8 @@ const App = () => {
             element={
               token ? (
                 <ProtectedRoute>
-                  {user?.role === 'worker' ? <WorkerDashboard /> : 
-                   user?.role === 'contractor' ? <ContractorDashboard /> : 
+                  {user?.role === 'worker' ? <WorkerDashboard /> :
+                   user?.role === 'contractor' ? <ContractorDashboard /> :
                    user?.role === 'engineer' ? <EngineerDashboard /> :
                    user?.role === 'site_manager' ? <SiteManagerDashboard /> :
                    <Dashboard />}
@@ -118,12 +113,9 @@ const App = () => {
           <Route path="/contractor-dashboard" element={<ProtectedRoute><ContractorDashboard /></ProtectedRoute>} />
           <Route path="/engineer-dashboard" element={<ProtectedRoute><EngineerDashboard /></ProtectedRoute>} />
           <Route path="/site-manager-dashboard" element={<ProtectedRoute><SiteManagerDashboard /></ProtectedRoute>} />
-          
+
           <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
-<<<<<<< HEAD
-=======
           <Route path="/materials" element={<ProtectedRoute><Materials /></ProtectedRoute>} />
->>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
           <Route path="/attendance" element={<ProtectedRoute><Attendance /></ProtectedRoute>} />
           <Route path="/equipment" element={<ProtectedRoute><Equipment /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />

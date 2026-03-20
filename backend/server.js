@@ -5,6 +5,13 @@ const path = require('path');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
+// Set environment variables directly for now
+process.env.MONGO_URI = 'mongodb://localhost:27017/construction-management';
+process.env.JWT_SECRET = 'your-super-secret-jwt-key-change-this-in-production';
+process.env.PORT = '5000';
+process.env.GOOGLE_CLIENT_ID = '923806966722-uj02gd7u2quc1vqvocv72dft2s2oqlcj.apps.googleusercontent.com';
+process.env.NODE_ENV = 'development';
+
 dotenv.config();
 
 const app = express();
@@ -28,13 +35,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
-<<<<<<< HEAD
 app.use('/api/materials', require('./routes/materialRequestRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
-=======
-app.use('/api/projects', require('./routes/projectRoutes'));
-app.use('/api/materials', require('./routes/materialRoutes'));
->>>>>>> bf98ea7563ee10ba16896f75a04cb46aad318a69
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
 app.use('/api/equipment', require('./routes/equipmentRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));

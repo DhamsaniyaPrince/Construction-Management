@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Report = require('../models/Report');
+const Project = require('../models/Project');
 const { saveFile } = require('../utils/fileStorage');
 const asyncHandler = require('../utils/asyncHandler');
 
@@ -25,6 +26,26 @@ const createReport = async (req, res) => {
 
   if (!validateObjectId(project)) {
     return res.status(400).json({ message: 'Invalid project ID' });
+  }
+
+  // Validate project assignment for Site Managers
+  if (req.user.role === 'site_manager') {
+    try {
+      const assignedProject = await Project.findOne({
+        _id: project,
+        siteManagers: { $in: [req.user._id] }
+      });
+
+      if (!assignedProject) {
+        console.log(`Site Manager ${req.user._id} trying to submit report for unassigned project ${project}`);
+        return res.status(403).json({ 
+          message: 'You can only submit reports for projects assigned to you' 
+        });
+      }
+    } catch (error) {
+      console.error('Error validating project assignment:', error);
+      return res.status(500).json({ message: 'Error validating project assignment' });
+    }
   }
 
   let uploadedImages = [];

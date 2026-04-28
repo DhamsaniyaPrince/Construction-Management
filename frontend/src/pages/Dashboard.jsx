@@ -6,6 +6,7 @@ import { materialService } from '../services/materialService';
 import { projectService } from '../services/projectService';
 import { reportService } from '../services/reportService';
 import { userService } from '../services/userService';
+import { materialRequestService } from '../services/materialRequestService';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ const Dashboard = () => {
     materials: 0,
     workers: 0,
     reports: 0,
+    materialRequests: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -21,21 +23,24 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [projects, materials, reports, users] = await Promise.all([
+        const [projects, materials, reports, users, materialRequests] = await Promise.all([
           projectService.getAll({ limit: 1 }),
           materialService.getAll({ limit: 1 }),
           reportService.getAll({ limit: 1 }),
           userService.getAll({ limit: 1 }),
+          materialRequestService.getAllMaterialRequests()
         ]);
-
+        
         setStats({
-          projects: projects.pagination?.total || 0,
-          materials: materials.pagination?.total || 0,
-          workers: users.pagination?.total || 0,
-          reports: reports.pagination?.total || 0,
+          projects: projects?.total || projects.length || 0,
+          materials: materials?.total || materials.length || 0,
+          workers: users?.total || users.length || 0,
+          reports: reports?.total || reports.length || 0,
+          materialRequests: materialRequests?.count || materialRequests.materialRequests?.length || 0,
         });
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load stats');
+      } catch (error) {
+        setError('Failed to load dashboard data');
+        console.error('Dashboard error:', error);
       } finally {
         setLoading(false);
       }
@@ -59,9 +64,37 @@ const Dashboard = () => {
       {/* Stats Grid - Matches EXACT reference layout */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <StatCard title="Total Projects" value={stats.projects} icon="📋" circleColor="bg-blue-circle" />
-        <StatCard title="Material Requests" value={stats.materials} icon="📦" circleColor="bg-green-circle" />
+        <StatCard title="Material Requests" value={stats.materialRequests} icon="📦" circleColor="bg-green-circle" />
         <StatCard title="Workers" value={stats.workers} icon="👷" circleColor="bg-yellow-circle" />
         <StatCard title="Daily Reports" value={stats.reports} icon="📝" circleColor="bg-purple-circle" />
+      </div>
+
+      {/* Material Requests Overview */}
+      <div className="glass-card p-6 mb-8">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Material Requests Overview</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-700 mb-3">Request Status Breakdown</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <div className="text-2xl font-bold text-yellow-600">Pending</div>
+                <div className="text-sm text-gray-600">Awaiting Engineer Review</div>
+              </div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="text-2xl font-bold text-blue-600">Engineer Approved</div>
+                <div className="text-sm text-gray-600">Ready for Contractor Review</div>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="text-2xl font-bold text-green-600">Approved</div>
+                <div className="text-sm text-gray-600">Final Approval Complete</div>
+              </div>
+              <div className="text-center p-4 bg-red-50 rounded-lg border border-red-200">
+                <div className="text-2xl font-bold text-red-600">Rejected</div>
+                <div className="text-sm text-gray-600">Request Denied</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">

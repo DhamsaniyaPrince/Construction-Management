@@ -6,7 +6,17 @@ const roles = ['admin', 'engineer', 'contractor', 'site_manager', 'worker'];
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    email: {
+  type: String,
+  required: function () {
+    return this.role !== "worker";
+  },
+  unique: true,
+  sparse: true,
+  lowercase: true,
+  trim: true,
+  default: undefined
+},
     password: { type: String, minlength: 6, select: false },
     googleId: { type: String, unique: true, sparse: true },
     role: { 
@@ -16,6 +26,8 @@ const userSchema = new mongoose.Schema(
       required: true
     },
     phone: { type: String, trim: true },
+    isVerified: { type: Boolean, default: false },
+    verificationToken: { type: String },
     
     // Worker Specific Fields
     dailyWage: { type: Number, default: 0 },
@@ -36,7 +48,14 @@ userSchema.pre('save', async function hashPassword(next) {
 });
 
 userSchema.methods.matchPassword = async function matchPassword(enteredPassword) {
-  return bcrypt.compare(enteredPassword, this.password);
+  console.log('🔐 Comparing passwords in User model...');
+  console.log('Entered password:', enteredPassword);
+  console.log('Stored hash starts with:', this.password.substring(0, 10) + '...');
+  
+  const result = await bcrypt.compare(enteredPassword, this.password);
+  console.log('🔍 bcrypt.compare result:', result);
+  
+  return result;
 };
 
 module.exports = mongoose.model('User', userSchema);

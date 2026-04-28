@@ -42,10 +42,22 @@ const Reports = () => {
 
   const fetchProjects = async () => {
     try {
-      const data = await projectService.getAll({ limit: 100 });
-      setProjects(data.data || []);
+      let projectsData;
+      
+      // Use assigned projects API for Site Managers, regular API for others
+      if (user?.role === 'site_manager') {
+        projectsData = await projectService.getAssignedProjects({ limit: 100 });
+      } else {
+        projectsData = await projectService.getProjects({ limit: 100 });
+      }
+      
+      setProjects(projectsData);
     } catch (err) {
       console.error('Failed to load projects:', err);
+      // If Site Manager gets 403, it means no projects assigned
+      if (err.response?.status === 403 && user?.role === 'site_manager') {
+        setProjects([]);
+      }
     }
   };
 
@@ -55,7 +67,7 @@ const Reports = () => {
     <section>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Daily Reports</h1>
-        {(user?.role === 'admin' || user?.role === 'engineer' || user?.role === 'worker') && (
+        {(user?.role === 'admin' || user?.role === 'engineer' || user?.role === 'worker' || user?.role === 'site_manager') && (
           <button
             onClick={() => setShowModal(true)}
             className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
@@ -196,6 +208,7 @@ const ReportCard = ({ report }) => {
 };
 
 const ReportModal = ({ projects, onClose, onSuccess }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     project: '',
     date: new Date().toISOString().split('T')[0],
@@ -243,12 +256,23 @@ const ReportModal = ({ projects, onClose, onSuccess }) => {
     }
   };
 
+  // Check if Site Manager has no assigned projects
+  const isSiteManagerWithNoProjects = user?.role === 'site_manager' && projects.length === 0;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-bold text-gray-900">Submit Daily Report</h2>
         {error && <ErrorAlert message={error} onClose={() => setError('')} />}
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        
+        {isSiteManagerWithNoProjects ? (
+          <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-yellow-800">
+              You have no projects assigned to you. Please contact your administrator to get projects assigned before submitting reports.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Project *</label>
             <select
@@ -326,11 +350,16 @@ const ReportModal = ({ projects, onClose, onSuccess }) => {
             <button type="button" onClick={onClose} className="rounded-md border px-4 py-2">
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="rounded-md bg-blue-600 px-4 py-2 text-white">
+            <button 
+              type="submit" 
+              disabled={loading || isSiteManagerWithNoProjects} 
+              className="rounded-md bg-blue-600 px-4 py-2 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
               {loading ? 'Submitting...' : 'Submit Report'}
             </button>
           </div>
         </form>
+        )}
       </div>
     </div>
   );

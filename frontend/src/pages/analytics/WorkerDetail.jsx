@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
-import workerAnalyticsService from '../../services/workerAnalyticsService';
+import { workerAnalyticsService } from '../../services/workerAnalyticsService';
+import { formatCurrency } from '../../utils/currency';
 
 const WorkerDetail = () => {
   const { id } = useParams();
@@ -116,8 +117,8 @@ const WorkerDetail = () => {
       <div className="bg-white p-4 rounded-lg shadow">
         <h3 className="text-sm font-semibold text-gray-700 mb-3">{title}</h3>
         <div className="space-y-2">
-          {data.map((month, index) => (
-            <div key={index} className="flex items-center space-x-2">
+          {data.map((month) => (
+            <div key={month.month} className="flex items-center space-x-2">
               <div className="w-16 text-xs text-gray-600">{month.month}</div>
               <div className="flex-1 flex space-x-1">
                 <div 
@@ -228,7 +229,7 @@ const WorkerDetail = () => {
           </div>
           <div>
             <div className="text-sm text-gray-500">Daily Wage</div>
-            <div className="font-medium">${workerData.worker.dailyWage}</div>
+            <div className="font-medium">{formatCurrency(workerData.worker.dailyWage)}</div>
           </div>
           <div>
             <div className="text-sm text-gray-500">Join Date</div>

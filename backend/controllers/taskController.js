@@ -38,20 +38,28 @@ const getTasks = async (req, res) => {
 // @access  Private (Contractor, Site Manager, Engineer, Admin)
 const createTask = async (req, res) => {
   try {
-    const { title, description, assignedTo, priority, dueDate, siteLocation } = req.body;
+    console.log("Incoming task payload:", req.body);
+    
+    const { title, description, assignedTo, priority, dueDate, siteLocation, project } = req.body;
 
-    if (!title || !description || !assignedTo) {
-        return res.status(400).json({ message: 'Please provide all required fields' });
+    // Support both project and projectId from frontend
+    const projectId = project || req.body.projectId;
+
+    if (!title || !assignedTo) {
+        return res.status(400).json({ 
+          message: 'Missing required task fields. Title and assignedTo are required.' 
+        });
     }
 
     const task = await Task.create({
       title,
-      description,
+      description: description || 'Task created via dashboard',
       assignedTo,
       assignedBy: req.user._id,
-      priority,
+      priority: priority || 'medium',
       dueDate,
       siteLocation,
+      project: projectId,
       status: 'Pending'
     });
 

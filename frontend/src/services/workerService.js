@@ -21,10 +21,14 @@ const updateWorkerSalary = async (salaryData) => {
   return response.data;
 };
 
-const workerService = {
-  getWorkers,
-  addWorker,
-  updateWorkerSalary
+const removeWorker = async (workerId) => {
+  const response = await api.delete(`/users/${workerId}`);
+  return response.data;
 };
 
-export default workerService;
+export const workerService = {
+  getWorkers,
+  addWorker,
+  updateWorkerSalary,
+  removeWorker
+};

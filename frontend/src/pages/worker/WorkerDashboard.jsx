@@ -3,7 +3,7 @@ import Loader from '../../components/Loader';
 import TaskCard from '../../components/TaskCard';
 import Notifications from '../../components/Notifications';
 import { useAuth } from '../../context/AuthContext';
-import taskService from '../../services/taskService';
+import { taskService } from '../../services/taskService';
 
 const WorkerDashboard = () => {
   const { user } = useAuth();
@@ -29,12 +29,12 @@ const WorkerDashboard = () => {
   };
 
   const handleUpdateStatus = async (taskId, currentStatus) => {
-    // Simple toggle logic for demo: Pending -> In Progress -> Completed
-    let newStatus = 'Pending';
-    if (currentStatus === 'Pending') newStatus = 'In Progress';
-    else if (currentStatus === 'In Progress') newStatus = 'Completed';
+    // Simple toggle logic for demo: Pending -> active -> completed
+    let newStatus = 'pending';
+    if (currentStatus === 'pending') newStatus = 'active';
+    else if (currentStatus === 'active') newStatus = 'completed';
     
-    if (currentStatus === 'Completed') return; 
+    if (currentStatus === 'completed') return; 
 
     try {
       await taskService.updateTask(taskId, { status: newStatus });
@@ -82,7 +82,7 @@ const WorkerDashboard = () => {
           <span className="text-xs text-gray-500 uppercase tracking-wide">Completed</span>
         </div>
         <div className="glass-panel p-4 flex flex-col items-center justify-center text-center">
-          <span className="text-3xl font-bold text-amber-500 mb-1">${todayWage}</span>
+          <span className="text-3xl font-bold text-amber-500 mb-1">₹{todayWage}</span>
           <span className="text-xs text-gray-500 uppercase tracking-wide">Daily Wage</span>
         </div>
          <div className="glass-panel p-4 flex flex-col items-center justify-center text-center border-blue-100 border">

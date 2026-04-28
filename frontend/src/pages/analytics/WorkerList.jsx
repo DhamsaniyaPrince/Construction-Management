@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
-import workerAnalyticsService from '../../services/workerAnalyticsService';
-import workerAnalyticsService from '../../services/workerAnalyticsService';
+import { workerAnalyticsService } from '../../services/workerAnalyticsService';
+import { formatCurrency } from '../../utils/currency';
 
 const WorkerList = () => {
   const navigate = useNavigate();
@@ -162,7 +162,7 @@ const WorkerList = () => {
             <div className="text-xs text-gray-500 mt-1">Currently Busy</div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-purple-600">${analytics.overview.averageWage.toFixed(0)}</div>
+            <div className="text-2xl font-bold text-purple-600">{formatCurrency(analytics.overview.averageWage)}</div>
             <div className="text-xs text-gray-500 mt-1">Average Wage</div>
           </div>
         </div>
@@ -202,7 +202,7 @@ const WorkerList = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Daily Wage:</span>
-                    <span className="font-medium">${worker.dailyWage || 0}</span>
+                    <span className="font-medium">{formatCurrency(worker.dailyWage || 0)}</span>
                   </div>
                   {performance && (
                     <div className="flex justify-between text-sm">

@@ -263,50 +263,58 @@ const getWorkerById = async (req, res) => {
 };
 
 // Add worker by contractor
+
+
 const addWorkerByContractor = async (req, res) => {
   try {
-    const { name, email, phone, dailyWage, password } = req.body;
 
-    // Validate required fields
-    if (!name || !email || !phone || !dailyWage) {
-      return res.status(400).json({ message: 'Please provide name, email, phone, and daily wage' });
-    }
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({ message: 'User with this email already exists' });
-    }
-
-    // Create worker with default password if not provided
-    const workerPassword = password || 'worker123';
-
-    const worker = await User.create({
+    const {
       name,
       email,
-      password: workerPassword,
-      role: 'worker',
       phone,
-      dailyWage: Number(dailyWage),
-      specialization: 'General Labor' // Default specialization
-    });
+      dailyWage,
+      specialization
+    } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: "Worker name is required" });
+    }
+
+    const workerData = {
+      name,
+      role: "worker",
+      phone,
+      dailyWage: dailyWage || 0,
+      specialization: specialization || "General Labor",
+      password: "worker123"
+    };
+
+    // only add email if provided
+    if (email && email.trim() !== "") {
+      workerData.email = email;
+    }
+
+    const worker = await User.create(workerData);
 
     res.status(201).json({
-      message: 'Worker added successfully',
-      worker: {
-        id: worker._id,
-        name: worker.name,
-        email: worker.email,
-        phone: worker.phone,
-        dailyWage: worker.dailyWage,
-        role: worker.role,
-        isAvailable: worker.isAvailable
-      }
+      message: "Worker created successfully",
+      worker
     });
+
   } catch (error) {
-    console.error('Error adding worker:', error);
-    res.status(500).json({ message: 'Failed to add worker' });
+
+    console.error("🔥 Error in addWorkerByContractor:", error);
+
+    res.status(500).json({
+      message: "Failed to create worker",
+      error: error.message
+    });
+
   }
+};
+
+module.exports = {
+  addWorkerByContractor
 };
 
 const updateWorkerSalary = async (req, res) => {
@@ -322,7 +330,7 @@ const updateWorkerSalary = async (req, res) => {
 
     // Validate daily wage is a positive number
     if (isNaN(dailyWage) || Number(dailyWage) <= 0) {
-      return res.status(400).json({ message: 'Daily wage must be a positive number' });
+      return res.status(400).json({ message: 'Daily wage must be a positive number (₹)' });
     }
 
     // Find and update the worker
@@ -359,12 +367,33 @@ const updateWorkerSalary = async (req, res) => {
   }
 };
 
+const deleteWorker = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Find and delete the worker
+    const worker = await User.findOneAndDelete({ _id: id, role: 'worker' });
+    
+    if (!worker) {
+      return res.status(404).json({ message: 'Worker not found' });
+    }
+
+    res.status(200).json({
+      message: 'Worker deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting worker:', error);
+    res.status(500).json({ message: 'Failed to delete worker' });
+  }
+};
+
 module.exports = { 
   getUsers, 
   getWorkerAnalytics,
   getWorkerById,
   addWorkerByContractor,
-  updateWorkerSalary
+  updateWorkerSalary,
+  deleteWorker
 };
 
 

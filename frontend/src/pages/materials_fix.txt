@@ -1,0 +1,19 @@
+<div className="space-y-4">
+        {materialRequests.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No material requests found</p>
+          </div>
+        ) : (
+          materialRequests.map((material) => (
+            <MaterialCard
+              key={material._id}
+              material={material}
+              onApprove={() => handleReview(material._id, 'approve', '')}
+              onReject={() => handleReview(material._id, 'reject', '')}
+              onStatusUpdate={handleStatusUpdate}
+              canReview={user?.role === 'admin' || user?.role === 'engineer'}
+              canUpdateStatus={user?.role === 'admin' || user?.role === 'engineer'}
+            />
+          ))
+        )}
+      </div>

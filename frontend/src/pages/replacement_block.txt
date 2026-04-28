@@ -1,0 +1,13 @@
+<div className="space-y-4">
+        {filteredRequests.map((request) => (
+          <MaterialRequestCard
+            key={request._id}
+            request={request}
+            canApprove={user?.role === "contractor"}
+            canUpdateStatus={
+              user?.role === "admin" ||
+              user?.role === "engineer"
+            }
+          />
+        ))}
+      </div>

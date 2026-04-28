@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Loader from '../../components/Loader';
-import workerAnalyticsService from '../../services/workerAnalyticsService';
+import { workerAnalyticsService } from '../../services/workerAnalyticsService';
+import { formatCurrency } from '../../utils/currency';
 
 const WorkerAnalytics = () => {
   const [analytics, setAnalytics] = useState(null);
@@ -161,7 +162,7 @@ const WorkerAnalytics = () => {
           <div className="text-xs text-gray-500 mt-1">Total Tasks</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
-          <div className="text-2xl font-bold text-pink-600">${analytics.overview.averageWage.toFixed(0)}</div>
+          <div className="text-2xl font-bold text-pink-600">{formatCurrency(analytics.overview.averageWage)}</div>
           <div className="text-xs text-gray-500 mt-1">Avg Daily Wage</div>
         </div>
       </div>
@@ -196,7 +197,7 @@ const WorkerAnalytics = () => {
         {analytics.topPerformers.length > 0 ? (
           <div className="space-y-3">
             {analytics.topPerformers.map((performer, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={performer._id || performer.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">
                     {index + 1}

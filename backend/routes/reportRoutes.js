@@ -12,7 +12,7 @@ const router = express.Router();
 router.post(
   '/',
   protect,
-  authorizeRoles('admin', 'engineer', 'worker'),
+  authorizeRoles('admin', 'engineer', 'worker', 'site_manager'),
   upload.array('images', 5),
   validate([
     body('project').notEmpty().withMessage('Project is required'),

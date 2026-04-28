@@ -12,12 +12,16 @@ import Equipment from './pages/Equipment';
 import Materials from './pages/Materials';
 import NotFound from './pages/NotFound';
 import Projects from './pages/Projects';
+import NewProject from './pages/projects/NewProject';
 import Reports from './pages/Reports';
 import SiteManagerDashboard from './pages/sitemanager/SiteManagerDashboard';
 import WorkerAnalytics from './pages/analytics/WorkerAnalytics';
 import WorkerDetail from './pages/analytics/WorkerDetail';
 import WorkerList from './pages/analytics/WorkerList';
-import WorkerDashboard from './pages/worker/WorkerDashboard';
+import NewWorker from './pages/worker/NewWorker';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ProjectDetail from './pages/ProjectDetail';
+import EditProject from './pages/EditProject';
 
 const App = () => {
   const { user, token, logout, loading } = useAuth();
@@ -42,13 +46,13 @@ const App = () => {
         <header className="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
             <Link to="/" className="text-xl font-bold flex items-center gap-2 text-blue-600">
-              <span className="text-2xl">🏗️</span> CMS
+              <span className="text-2xl">🏗️</span> ContractorHub
             </Link>
 
             <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-500">
-              <Link to="/" className="hover:text-blue-600 transition-colors">Dashboard</Link>
+              <Link to={user?.role === 'admin' ? '/admin-dashboard' : '/'} className="hover:text-blue-600 transition-colors">Dashboard</Link>
 
-              {user?.role !== 'worker' && user?.role !== 'contractor' && user?.role !== 'engineer' && (
+              {user?.role !== 'contractor' && user?.role !== 'engineer' && (
                 <>
                   <Link to="/projects" className="hover:text-blue-600 transition-colors">Projects</Link>
                   <Link to="/materials" className="hover:text-blue-600 transition-colors">Materials</Link>
@@ -91,11 +95,11 @@ const App = () => {
             element={
               token ? (
                 <ProtectedRoute>
-                  {user?.role === 'worker' ? <WorkerDashboard /> :
-                   user?.role === 'contractor' ? <ContractorDashboard /> :
+                  {user?.role === 'contractor' ? <ContractorDashboard /> :
                    user?.role === 'engineer' ? <EngineerDashboard /> :
                    user?.role === 'site_manager' ? <SiteManagerDashboard /> :
-                   <Dashboard />}
+                   user?.role === 'admin' ? <AdminDashboard /> :
+                   <Navigate to="/" />}
                 </ProtectedRoute>
               ) : (
                 <Auth />
@@ -109,18 +113,22 @@ const App = () => {
           />
 
           {/* Protected routes */}
-          <Route path="/worker-dashboard" element={<ProtectedRoute><WorkerDashboard /></ProtectedRoute>} />
+          <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           <Route path="/contractor-dashboard" element={<ProtectedRoute><ContractorDashboard /></ProtectedRoute>} />
           <Route path="/engineer-dashboard" element={<ProtectedRoute><EngineerDashboard /></ProtectedRoute>} />
           <Route path="/site-manager-dashboard" element={<ProtectedRoute><SiteManagerDashboard /></ProtectedRoute>} />
 
           <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+          <Route path="/projects/new" element={<ProtectedRoute><NewProject /></ProtectedRoute>} />
+          <Route path="/projects/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
+          <Route path="/projects/:id/edit" element={<ProtectedRoute><EditProject /></ProtectedRoute>} />
           <Route path="/materials" element={<ProtectedRoute><Materials /></ProtectedRoute>} />
           <Route path="/attendance" element={<ProtectedRoute><Attendance /></ProtectedRoute>} />
           <Route path="/equipment" element={<ProtectedRoute><Equipment /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
           <Route path="/worker-analytics" element={<ProtectedRoute><WorkerAnalytics /></ProtectedRoute>} />
           <Route path="/worker-list" element={<ProtectedRoute><WorkerList /></ProtectedRoute>} />
+          <Route path="/worker-list/new" element={<ProtectedRoute><NewWorker /></ProtectedRoute>} />
           <Route path="/worker-analytics/:id" element={<ProtectedRoute><WorkerDetail /></ProtectedRoute>} />
 
           <Route path="/404" element={<NotFound />} />

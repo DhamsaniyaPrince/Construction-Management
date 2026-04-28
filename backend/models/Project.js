@@ -27,13 +27,21 @@ const projectSchema = new mongoose.Schema(
     clientName: { type: String, trim: true },
     clientContact: { type: String, trim: true },
     contractorDetails: { type: String, trim: true },
+    contractor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Add contractor reference
     teamSize: { type: Number },
     permits: { type: String, trim: true },
     insurance: { type: String, trim: true },
     engineers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    siteManagers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     milestones: [milestoneSchema],
   },
   { timestamps: true }
 );
+
+// Add compound index to prevent duplicate projects by same contractor (only for non-null contractors)
+projectSchema.index({ name: 1, contractor: 1 }, { 
+  unique: true, 
+  partialFilterExpression: { contractor: { $exists: true, $ne: null } }
+});
 
 module.exports = mongoose.model('Project', projectSchema);

@@ -49,4 +49,12 @@ export const formatINRSimple = (amount) => {
   return '₹' + result + afterPoint;
 };
 
+// Reusable currency formatter (recommended for all new code)
+export const formatCurrency = (amount) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0
+  }).format(amount || 0);
+
 export default formatINR;

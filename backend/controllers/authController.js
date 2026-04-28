@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
+const crypto = require('crypto');
 const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
+const { sendEmail } = require('../utils/sendEmail');
 
 const signToken = (user) =>
   jwt.sign(
@@ -63,6 +65,13 @@ const googleAuth = async (req, res) => {
     } else {
       const allowedRoles = ['contractor', 'site_manager', 'engineer'];
 
+      // Block admin account creation through public signup
+      if (role === 'admin') {
+        return res.status(403).json({
+          message: 'Admin accounts cannot be created via public signup',
+        });
+      }
+
       if (role === 'worker') {
         return res.status(403).json({
           message:
@@ -78,6 +87,7 @@ const googleAuth = async (req, res) => {
         email,
         googleId,
         role: userRole,
+        isVerified: true, // Google users are automatically verified
       });
     }
 
@@ -132,6 +142,13 @@ const signupUser = async (req, res) => {
 
   const allowedRoles = ['contractor', 'site_manager', 'engineer'];
 
+  // Block admin account creation through public signup
+  if (role === 'admin') {
+    return res.status(403).json({
+      message: 'Admin accounts cannot be created via public signup',
+    });
+  }
+
   if (role === 'worker') {
     return res.status(403).json({
       message:
@@ -155,17 +172,48 @@ const signupUser = async (req, res) => {
     phone: phone || '',
   });
 
-  const token = signToken(user);
+  // Generate verification token
+  const verificationToken = crypto.randomBytes(32).toString('hex');
+  user.verificationToken = verificationToken;
+  await user.save();
+
+  // Send verification email
+  try {
+    const verificationUrl = `http://localhost:5000/api/auth/verify-email/${verificationToken}`;
+    
+    // Development helper - log verification link
+    console.log("🔗 Verification link:", verificationUrl);
+    
+    const html = `
+      <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+        <h2 style="color: #333; text-align: center;">Welcome to ContractorHub</h2>
+        <p style="color: #666; line-height: 1.6;">Hi ${name},</p>
+        <p style="color: #666; line-height: 1.6;">Thank you for signing up! Please verify your email address to activate your account.</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verificationUrl}" style="background-color: #007bff; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify Email</a>
+        </div>
+        <p style="color: #666; line-height: 1.6;">If the button above doesn't work, you can copy and paste this link into your browser:</p>
+        <p style="color: #007bff; word-break: break-all;">${verificationUrl}</p>
+        <p style="color: #666; line-height: 1.6;">This link will expire in 24 hours.</p>
+        <p style="color: #666; line-height: 1.6;">Best regards,<br>ContractorHub Team</p>
+      </div>
+    `;
+
+    await sendEmail(email, 'Verify Your Email - ContractorHub', html);
+  } catch (emailError) {
+    console.error('Error sending verification email:', emailError);
+    // Continue with registration even if email fails
+  }
 
   return res.status(201).json({
-    message: 'User registered successfully',
-    token,
+    message: 'User registered successfully. Please check your email to verify your account.',
     user: {
       id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
       phone: user.phone,
+      isVerified: user.isVerified,
     },
   });
 };
@@ -217,8 +265,11 @@ const loginUser = async (req, res) => {
 
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
+    console.log('❌ User not found:', email);
     return res.status(401).json({ message: 'Invalid credentials' });
   }
+
+  console.log('🔍 Found user:', { email: user.email, role: user.role, isVerified: user.isVerified });
 
   // Reject worker login
   if (user.role === 'worker') {
@@ -227,7 +278,21 @@ const loginUser = async (req, res) => {
     });
   }
 
+  // Check email verification
+  if (!user.isVerified) {
+    console.log('❌ User not verified:', user.email);
+    return res.status(403).json({
+      message: 'Please verify your email before logging in',
+    });
+  }
+
+  console.log('🔑 Comparing passwords...');
+  console.log('Entered password:', password);
+  console.log('Stored hash starts with:', user.password.substring(0, 10) + '...');
+
   const isMatch = await user.matchPassword(password);
+  console.log('🔐 Password match result:', isMatch);
+
   if (!isMatch) {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
@@ -260,10 +325,41 @@ const getCurrentUser = async (req, res) => {
   });
 };
 
+// Email verification
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    const user = await User.findOne({ verificationToken: token });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired verification token' });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    return res.status(200).json({
+      message: 'Email verified successfully. You can now login.',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isVerified: user.isVerified,
+      },
+    });
+  } catch (error) {
+    console.error('Email verification error:', error);
+    return res.status(500).json({ message: 'Email verification failed' });
+  }
+};
+
 module.exports = {
   googleAuth: asyncHandler(googleAuth),
   signupUser: asyncHandler(signupUser),
   registerUser: asyncHandler(registerUser),
   loginUser: asyncHandler(loginUser),
   getCurrentUser: asyncHandler(getCurrentUser),
+  verifyEmail: asyncHandler(verifyEmail),
 };

@@ -1,5 +1,5 @@
 import api from './api';
-import workerService from './workerService';
+import { workerService } from './workerService';
 
 const getWorkerAnalytics = async () => {
   const response = await api.get('/users/analytics');
@@ -21,10 +21,8 @@ const getWorkers = async () => {
   }
 };
 
-const workerAnalyticsService = {
+export const workerAnalyticsService = {
   getWorkerAnalytics,
   getWorkerById,
   getWorkers
 };
-
-export default workerAnalyticsService;

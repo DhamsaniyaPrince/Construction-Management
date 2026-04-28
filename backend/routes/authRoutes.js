@@ -1,6 +1,6 @@
 const express = require('express');
 const { body } = require('express-validator');
-const { googleAuth, signupUser, registerUser, loginUser, getCurrentUser } = require('../controllers/authController');
+const { googleAuth, signupUser, registerUser, loginUser, getCurrentUser, verifyEmail } = require('../controllers/authController');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 const validate = require('../middleware/validate');
 
@@ -46,5 +46,8 @@ router.post(
 
 // Current user
 router.get('/me', protect, getCurrentUser);
+
+// Email verification
+router.get('/verify-email/:token', verifyEmail);
 
 module.exports = router;

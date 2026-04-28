@@ -21,11 +21,9 @@ const deleteNotification = async (id) => {
   return response.data;
 };
 
-const notificationService = {
+export const notificationService = {
   getNotifications,
   markAsRead,
   markAllAsRead,
   deleteNotification
 };
-
-export default notificationService;

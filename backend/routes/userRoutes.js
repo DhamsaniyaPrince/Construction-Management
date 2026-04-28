@@ -1,5 +1,5 @@
 const express = require('express');
-const { getUsers, getWorkerAnalytics, getWorkerById, addWorkerByContractor, updateWorkerSalary } = require('../controllers/userController');
+const { getUsers, getWorkerAnalytics, getWorkerById, addWorkerByContractor, updateWorkerSalary, deleteWorker } = require('../controllers/userController');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -9,6 +9,7 @@ router.get('/analytics', protect, getWorkerAnalytics);
 router.get('/:id', protect, getWorkerById);
 router.post('/add-worker', protect, authorizeRoles('admin', 'contractor', 'site_manager'), addWorkerByContractor);
 router.put('/update-salary', protect, authorizeRoles('admin', 'contractor', 'site_manager'), updateWorkerSalary);
+router.delete('/:id', protect, authorizeRoles('admin', 'contractor', 'site_manager'), deleteWorker);
 
 module.exports = router;
 

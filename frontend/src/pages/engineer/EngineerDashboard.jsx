@@ -1,21 +1,45 @@
 import { useEffect, useState } from 'react';
 import Loader from '../../components/Loader';
 import { useAuth } from '../../context/AuthContext';
-import blueprintService from '../../services/blueprintService';
-import projectService from '../../services/projectService';
-import taskService from '../../services/taskService'; // To approve/inspect tasks
+import { blueprintService } from '../../services/blueprintService';
+import { projectService } from "../../services/projectService";
+import { taskService } from '../../services/taskService'; // To approve/inspect tasks
+import { materialRequestService } from '../../services/materialRequestService';
 
-const TABS = ['Overview', 'Blueprints', 'Site Inspections'];
+const TABS = ['Overview', 'Blueprints', 'Material Approvals', 'Site Inspections'];
 
 const EngineerDashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('Overview');
   const [loading, setLoading] = useState(false);
 
+  // Status badge helper
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      'PENDING_ENGINEER_APPROVAL': 'bg-yellow-100 text-yellow-800',
+      'PENDING_CONTRACTOR_APPROVAL': 'bg-orange-100 text-orange-800',
+      'ENGINEER_APPROVED': 'bg-blue-100 text-blue-800',
+      'ENGINEER_REJECTED': 'bg-red-100 text-red-800',
+      'CONTRACTOR_APPROVED': 'bg-green-100 text-green-800',
+      'CONTRACTOR_REJECTED': 'bg-red-100 text-red-800',
+      'PURCHASED': 'bg-purple-100 text-purple-800',
+      'DELIVERED': 'bg-green-100 text-green-800'
+    };
+    
+    const displayStatus = status.replace(/_/g, ' ');
+    
+    return (
+      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[status] || 'bg-gray-100 text-gray-800'}`}>
+        {displayStatus}
+      </span>
+    );
+  };
+
   // Data
   const [projects, setProjects] = useState([]);
   const [blueprints, setBlueprints] = useState([]);
   const [tasksToCheck, setTasksToCheck] = useState([]); // Tasks needing inspection
+  const [materialRequests, setMaterialRequests] = useState([]); // Material requests needing approval
 
   // Forms
   const [newBlueprint, setNewBlueprint] = useState({ title: '', version: '1.0', imageUrl: '', projectId: '' });
@@ -24,22 +48,51 @@ const EngineerDashboard = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    console.log("Projects state updated:", projects);
+    console.log("Projects length:", projects?.length);
+  }, [projects]);
+
   const fetchData = async () => {
     setLoading(true);
     try {
-      const projectsRes = await projectService.getProjects(); // Assuming allows engineer
-      setProjects(projectsRes.data || projectsRes); // wrapper handling
+      const [projectsRes, blueprintsRes, tasksRes, materialRequestsRes] = await Promise.all([
+        projectService.getProjects(), // Backend will filter by role
+        blueprintService.getBlueprints(),
+        taskService.getTasks(),
+        materialRequestService.getEngineerMaterialRequests() // Use specific engineer endpoint
+      ]);
       
-      const blueprintsRes = await blueprintService.getBlueprints();
+      console.log('Projects Response:', projectsRes);
+      console.log('Projects type:', typeof projectsRes);
+      console.log('Is array:', Array.isArray(projectsRes));
+      console.log('Projects length:', projectsRes?.length);
+      
+      setProjects(Array.isArray(projectsRes) ? projectsRes : []);
       setBlueprints(blueprintsRes);
-
-      const tasksRes = await taskService.getTasks();
       // Filter for 'Completed' status which needs verification
       setTasksToCheck(tasksRes.filter(t => t.status === 'Completed'));
+      setMaterialRequests(materialRequestsRes.data || []);
+      console.log('Set Material Requests:', materialRequestsRes.data || []);
     } catch (error) {
-      console.error(error);
+      console.error('Error in fetchData:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEngineerApproval = async (requestId, approved, comments = '') => {
+    try {
+      await materialRequestService.engineerApproval(requestId, { approved, comments });
+      alert(`Material request ${approved ? 'approved' : 'rejected'} successfully!`);
+      fetchData();
+    } catch (error) {
+      console.error('Engineer approval error:', error);
+      const errorMessage = error?.response?.data?.message || 
+                           error?.response?.data?.error || 
+                           error?.message || 
+                           'Failed to process approval';
+      alert(`Error: ${errorMessage}`);
     }
   };
 
@@ -171,6 +224,68 @@ const EngineerDashboard = () => {
              </div>
            </div>
          )}
+
+         {/* MATERIAL APPROVALS */}
+         {activeTab === 'Material Approvals' && (
+          <div>
+            <h2 className="text-xl font-bold text-gray-800 mb-6">Material Requests Pending Technical Review</h2>
+            {materialRequests.length === 0 && <p className="text-gray-500">No pending material requests.</p>}
+            <div className="space-y-4">
+              {materialRequests.map(request => (
+                <div key={request._id} className="glass-card p-6 hover:shadow-lg transition-shadow">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800">{request.materialName}</h3>
+                      <p className="text-sm text-gray-500">
+                        Requested by: {request.requestedBy?.name} • {new Date(request.createdAt).toLocaleDateString()}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">Project: {request.projectId?.name || 'N/A'}</p>
+                    </div>
+                    {getStatusBadge(request.status)}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <span className="text-sm text-gray-600">Material:</span>
+                      <span className="font-medium">{request.materialName}</span>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Quantity:</span>
+                      <span className="font-medium">{request.quantity} {request.unit}</span>
+                    </div>
+                  </div>
+
+                  {request.description && (
+                    <div className="mb-4">
+                      <span className="text-sm text-gray-600">Description:</span>
+                      <p className="text-gray-700 bg-gray-50 p-3 rounded mt-1">{request.description}</p>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                    <div className="text-sm text-gray-500">
+                      Status: <span className="font-medium">{request.status.replace(/_/g, ' ')}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => handleEngineerApproval(request._id, true)}
+                        className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+                      >
+                        Approve
+                      </button>
+                      <button 
+                        onClick={() => handleEngineerApproval(request._id, false)}
+                        className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
          {/* SITE INSPECTIONS */}
          {activeTab === 'Site Inspections' && (

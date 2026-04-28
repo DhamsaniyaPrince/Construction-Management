@@ -29,11 +29,19 @@ const protect = async (req, res, next) => {
 
 const authorizeRoles = (...roles) => {
   return (req, res, next) => {
+    console.log('🔍 AuthorizeRoles check:');
+    console.log('   User ID:', req.user._id);
+    console.log('   User role:', req.user.role);
+    console.log('   Required roles:', roles);
+    console.log('   User email:', req.user.email);
+    
     if (!roles.includes(req.user.role)) {
+      console.log('❌ Access denied for role:', req.user.role);
       return res.status(403).json({
-        message: "Access denied"
+        message: `Access denied. Required roles: ${roles.join(', ')}, Current role: ${req.user.role}`
       });
     }
+    console.log('✅ Access granted for role:', req.user.role);
     next();
   };
 };

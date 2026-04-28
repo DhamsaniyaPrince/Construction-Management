@@ -11,9 +11,7 @@ const uploadBlueprint = async (blueprintData) => {
   return response.data;
 };
 
-const blueprintService = {
+export const blueprintService = {
   getBlueprints,
   uploadBlueprint
 };
-
-export default blueprintService;
